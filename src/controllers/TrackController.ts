@@ -14,6 +14,19 @@ class TrackController {
 
     return res.json(track);
   }
+
+  public async findById (req: Request, res: Response): Promise<Response> {
+    const { id: _id } = req.params;
+    const track = await Track.findById(_id);
+
+    return res.json(track);
+  }
+
+  public async update (req: Request, res: Response): Promise<Response> {
+    const updatedTrack = await Track.findByIdAndUpdate(req.body._id, req.body);
+
+    return res.json(updatedTrack);
+  }
 }
 
 export default new TrackController();

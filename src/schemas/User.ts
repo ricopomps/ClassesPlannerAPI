@@ -7,8 +7,7 @@ interface UserInterface extends Document {
   profile: number,
   segmento: string,
   turmas: [number],
-  disciplinas: [number],
-  tracks: [Schema.ObjectId]
+  disciplinas: [number]
 }
 
 const UserSchema = new Schema({
@@ -18,8 +17,7 @@ const UserSchema = new Schema({
   profile: Number,
   segmento: String,
   turmas: [Number],
-  disciplinas: [Number],
-  tracks: [Schema.ObjectId]
+  disciplinas: [Number]
 }, {
   timestaps: true
 });
