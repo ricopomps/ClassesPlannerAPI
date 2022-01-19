@@ -14,6 +14,12 @@ class UserController {
 
     return res.json(user);
   }
+
+  public async update (req: Request, res: Response): Promise<Response> {
+    const updatedUser = await User.findByIdAndUpdate(req.body._id, req.body);
+
+    return res.json(updatedUser);
+  }
 }
 
 export default new UserController();

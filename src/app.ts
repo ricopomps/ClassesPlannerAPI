@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import mongoose from 'mongoose';
+import dotenv from 'dotenv';
 
 import routes from './routes';
 
@@ -10,6 +11,7 @@ class App {
     constructor () {
       this.express = express();
 
+      dotenv.config();
       this.middlewares();
       this.database();
       this.routes();
@@ -21,7 +23,7 @@ class App {
     }
 
     private database (): void {
-      mongoose.connect('connectionString', {
+      mongoose.connect(process.env.CONNECTION_STRING, {
         useNewUrlParser: true
       });
     }
