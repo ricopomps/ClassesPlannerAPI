@@ -21,7 +21,7 @@ class App {
     }
 
     private database (): void {
-      mongoose.connect('mongodb+srv://praticaprojeto:praticaprojeto@mycluster.tuuar.mongodb.net/visao?retryWrites=true&w=majority', {
+      mongoose.connect('connectionString', {
         useNewUrlParser: true
       });
     }
