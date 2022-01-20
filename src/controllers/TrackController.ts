@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import mongoose from 'mongoose';
 
 import Track from '../schemas/Track';
+import { ProfileEnum } from './../model/profileEnum';
 
 class TrackController {
   public async index (req: Request, res: Response): Promise<Response> {
@@ -73,6 +74,31 @@ class TrackController {
       ]
     ).exec();
     return res.json(tracks);
+  }
+
+  public async returnHome (req: Request, res: Response): Promise<Response> {
+    const { id: _id, disciplina, segmento, profile } = req.body;
+    switch (profile) {
+      case ProfileEnum.professor:
+        console.log('findByUsers', segmento, _id);
+        return res.json('findByUsers');
+
+      case ProfileEnum.coordenador:
+        console.log('findFiltered', segmento);
+        return res.json('findFiltered, segmento: ' + segmento);
+
+      case ProfileEnum.coordenadorDeArea:
+        console.log('findFiltered', disciplina);
+        return res.json('findFiltered, disciplina: ' + disciplina);
+
+      case ProfileEnum.adiministrador:
+        console.log('index');
+        return res.json('index');
+
+      default:
+        console.log('Perfil inválido');
+        return res.json('Perfil inválido');
+    }
   }
 }
 

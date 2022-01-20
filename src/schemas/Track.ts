@@ -1,8 +1,11 @@
 import { Schema, model, Document } from 'mongoose';
 
+import { DisciplinaEnum } from './../model/disciplinaEnum';
+import { TurmaEnum } from './../model/turmaEnum';
+
 interface TrackInterface extends Document {
-  turma: number,
-  disciplina: number,
+  turma: TurmaEnum,
+  disciplina: DisciplinaEnum,
   objectives: string,
   associatedHabilities: [string],
   activities: [{
