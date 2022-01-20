@@ -12,6 +12,8 @@ routes.get('/users/:id', UserController.findWithTracks);
 routes.get('/tracks', TrackController.index);
 routes.post('/tracks', TrackController.store);
 routes.get('/tracks/:id', TrackController.findById);
+routes.post('/tracks/filter', TrackController.findFiltered);
+routes.get('/tracks/filter/:id', TrackController.findByUser);
 routes.put('/tracks', TrackController.findById);
 
 export default routes;

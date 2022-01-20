@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import mongoose from 'mongoose';
 
 import Track from '../schemas/Track';
 
@@ -26,6 +27,52 @@ class TrackController {
     const updatedTrack = await Track.findByIdAndUpdate(req.body._id, req.body);
 
     return res.json(updatedTrack);
+  }
+
+  public async findByUser (req: Request, res: Response): Promise<Response> {
+    const { id: _id } = req.params;
+    const tracks = await Track.aggregate(
+      [
+        { $match: { creator: mongoose.Types.ObjectId(_id) } },
+        {
+          $lookup: {
+            from: 'users',
+            localField: 'creator',
+            foreignField: '_id',
+            as: 'creator'
+          }
+        }
+      ]
+    ).exec();
+    return res.json(tracks);
+  }
+
+  public async findFiltered (req: Request, res: Response): Promise<Response> {
+    const { id: _id, disciplina, turma } = req.body;
+    let filter = {};
+    if (_id) {
+      filter = { ...filter, creator: mongoose.Types.ObjectId(_id) };
+    }
+    if (disciplina) {
+      filter = { ...filter, disciplina: disciplina };
+    }
+    if (turma) {
+      filter = { ...filter, turma: turma };
+    }
+    const tracks = await Track.aggregate(
+      [
+        { $match: filter },
+        {
+          $lookup: {
+            from: 'users',
+            localField: 'creator',
+            foreignField: '_id',
+            as: 'creator'
+          }
+        }
+      ]
+    ).exec();
+    return res.json(tracks);
   }
 }
 
