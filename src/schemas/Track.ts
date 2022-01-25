@@ -17,7 +17,7 @@ interface TrackInterface extends Document {
   creator: Schema.ObjectId
 }
 
-const UserSchema = new Schema({
+const TrackSchema = new Schema({
   turma: Number,
   disciplina: Number,
   objectives: String,
@@ -34,4 +34,4 @@ const UserSchema = new Schema({
   timestaps: true
 });
 
-export default model<TrackInterface>('Track', UserSchema);
+export default model<TrackInterface>('Track', TrackSchema);

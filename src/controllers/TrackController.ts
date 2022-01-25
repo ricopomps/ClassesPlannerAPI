@@ -12,7 +12,7 @@ class TrackController {
   }
 
   public async store (req: Request, res: Response): Promise<Response> {
-    const track = await Track.create(req.body);
+    const track = await Track.create({ ...req.body, creator: req.user._id });
 
     return res.json(track);
   }
@@ -25,13 +25,14 @@ class TrackController {
   }
 
   public async update (req: Request, res: Response): Promise<Response> {
-    const updatedTrack = await Track.findByIdAndUpdate(req.body._id, req.body);
+    const updatedTrack = await Track.findByIdAndUpdate(req.user._id, req.user);
 
     return res.json(updatedTrack);
   }
 
   public async findByUser (req: Request, res: Response): Promise<Response> {
     const { id: _id } = req.params;
+
     const tracks = await Track.aggregate(
       [
         { $match: { creator: mongoose.Types.ObjectId(_id) } },
@@ -49,35 +50,39 @@ class TrackController {
   }
 
   public async findFiltered (req: Request, res: Response): Promise<Response> {
-    const { id: _id, disciplina, turma } = req.body;
-    let filter = {};
-    if (_id) {
-      filter = { ...filter, creator: mongoose.Types.ObjectId(_id) };
-    }
-    if (disciplina) {
-      filter = { ...filter, disciplina: disciplina };
-    }
-    if (turma) {
-      filter = { ...filter, turma: turma };
-    }
-    const tracks = await Track.aggregate(
-      [
-        { $match: filter },
-        {
-          $lookup: {
-            from: 'users',
-            localField: 'creator',
-            foreignField: '_id',
-            as: 'creator'
+    try {
+      const { _id, disciplina, turma } = req.user;
+      let filter = {};
+      if (_id) {
+        filter = { ...filter, creator: mongoose.Types.ObjectId(_id) };
+      }
+      if (disciplina) {
+        filter = { ...filter, disciplina: disciplina };
+      }
+      if (turma) {
+        filter = { ...filter, turma: turma };
+      }
+      const tracks = await Track.aggregate(
+        [
+          { $match: filter },
+          {
+            $lookup: {
+              from: 'users',
+              localField: 'creator',
+              foreignField: '_id',
+              as: 'creator'
+            }
           }
-        }
-      ]
-    ).exec();
-    return res.json(tracks);
+        ]
+      ).exec();
+      return res.json(tracks);
+    } catch (error) {
+      return res.send(error.message);
+    }
   }
 
   public async returnHome (req: Request, res: Response): Promise<Response> {
-    const { id: _id, disciplina, segmento, profile } = req.body;
+    const { _id, disciplina, segmento, profile } = req.user;
     switch (profile) {
       case ProfileEnum.professor:
         console.log('findByUsers', segmento, _id);
@@ -96,7 +101,8 @@ class TrackController {
         return res.json('index');
 
       default:
-        console.log('Perfil inválido');
+        console.log(req.user);
+        console.log('profile', profile);
         return res.json('Perfil inválido');
     }
   }
