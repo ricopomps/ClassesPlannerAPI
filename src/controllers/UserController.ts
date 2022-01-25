@@ -21,7 +21,7 @@ class UserController {
   public async login (req: Request, res: Response): Promise<Response> {
     const user = await User.findOne({ email: req.body.email });
     if (user == null || !bcrypt.compare(req.body.password, user.password)) return res.sendStatus(404);
-    console.log(user);
+
     try {
       const acessToken = jwt.sign({ user }, process.env.ACESS_TOKEN_SECRET);
 

@@ -15,7 +15,7 @@ routes.post('/tracks', UserController.authenticate, TrackController.store);
 routes.get('/tracks/filter', UserController.authenticate, TrackController.findFiltered);
 routes.get('/tracks/:id', UserController.authenticate, TrackController.findById);
 routes.get('/tracks/filter/:id', UserController.authenticate, TrackController.findByUser);
-routes.put('/tracks', UserController.authenticate, TrackController.findById);
+routes.put('/tracks', UserController.authenticate, TrackController.update);
 routes.get('/home/tracks', UserController.authenticate, TrackController.returnHome);
 
 export default routes;
