@@ -6,8 +6,19 @@ import { ProfileEnum } from './../model/profileEnum';
 
 class TrackService {
   public async index () {
-    const tracks = await Track.find();
+    const tracks = await Track.aggregate(
+      [
+        {
+          $lookup: {
+            from: 'users',
+            localField: 'creator',
+            foreignField: '_id',
+            as: 'creator'
 
+          }
+        }, { $unwind: { path: '$creator' } }, { $unset: 'creator.password' }
+      ]
+    ).exec();
     return tracks;
   }
 
@@ -18,7 +29,20 @@ class TrackService {
   }
 
   public async findById (id) {
-    const track = await Track.findById(id);
+    const track = await Track.aggregate(
+      [
+        { $match: { _id: mongoose.Types.ObjectId(id) } },
+        {
+          $lookup: {
+            from: 'users',
+            localField: 'creator',
+            foreignField: '_id',
+            as: 'creator'
+
+          }
+        }, { $unwind: { path: '$creator' } }, { $unset: 'creator.password' }
+      ]
+    ).exec();
 
     return track;
   }
@@ -39,14 +63,15 @@ class TrackService {
             localField: 'creator',
             foreignField: '_id',
             as: 'creator'
+
           }
-        }
+        }, { $unwind: { path: '$creator' } }, { $unset: 'creator.password' }
       ]
     ).exec();
     return tracks;
   }
 
-  public async findFiltered (id, disciplinas, turmas) {
+  public async findFiltered (id, disciplinas, turmas, segmento) {
     try {
       let filter = {};
       if (id) {
@@ -58,6 +83,9 @@ class TrackService {
       if (turmas) {
         filter = { ...filter, turma: { $in: turmas } };
       }
+      // if (segmento) {
+      //   filter = { ...filter, segmento: segmento };
+      // }
       const tracks = await Track.aggregate(
         [
           { $match: filter },
@@ -67,8 +95,11 @@ class TrackService {
               localField: 'creator',
               foreignField: '_id',
               as: 'creator'
+              // let: { segmento: '$creatorz.segmento' },
+              // pipeline: [{ $match: { segmento: segmento, creatorz: '$creator' } }]
             }
-          }
+
+          }, { $unwind: { path: '$creator' } }, { $unset: 'creator.password' }
         ]
       ).exec();
       return tracks;
@@ -81,19 +112,19 @@ class TrackService {
     switch (profile) {
       case ProfileEnum.professor:
         console.log('findByUsers', segmento, _id);
-        return ('findByUsers');
+        return await this.findFiltered(null, disciplina, null, segmento);
 
       case ProfileEnum.coordenador:
         console.log('findFiltered', segmento);
-        return ('findFiltered, segmento: ' + segmento);
+        return await this.findFiltered(null, disciplina, null, null);
 
       case ProfileEnum.coordenadorDeArea:
         console.log('findFiltered', disciplina);
-        return ('findFiltered, disciplina: ' + disciplina);
+        return await this.findFiltered(null, disciplina, null, null);
 
       case ProfileEnum.adiministrador:
         console.log('index');
-        return ('index');
+        return await this.index();
 
       default:
         console.log('profile', profile);

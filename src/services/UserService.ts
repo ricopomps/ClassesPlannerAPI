@@ -4,12 +4,11 @@ import jwt from 'jsonwebtoken';
 import User from '../schemas/User';
 
 class UserService {
-  public async login (user) {
-    const userInput = await User.findOne({ email: user.email });
-    if (userInput == null || !bcrypt.compare(user.password, userInput.password)) return null;
-
+  public async login (inputUser) {
+    const user = await User.findOne({ email: inputUser.email }).select('+password').lean();
+    if (user == null || !(await bcrypt.compare(inputUser.password, user.password))) return null;
     try {
-      const acessToken = jwt.sign({ userInput }, process.env.ACESS_TOKEN_SECRET);
+      const acessToken = jwt.sign({ user }, process.env.ACESS_TOKEN_SECRET);
 
       return ({ acessToken });
     } catch (error) {

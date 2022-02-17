@@ -4,6 +4,7 @@ import { DisciplinaEnum } from './../model/disciplinaEnum';
 import { TurmaEnum } from './../model/turmaEnum';
 
 interface TrackInterface extends Document {
+  name: string,
   turma: TurmaEnum,
   disciplina: DisciplinaEnum,
   objectives: string,
@@ -18,6 +19,7 @@ interface TrackInterface extends Document {
 }
 
 const TrackSchema = new Schema({
+  name: String,
   turma: Number,
   disciplina: Number,
   objectives: String,

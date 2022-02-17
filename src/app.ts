@@ -29,9 +29,6 @@ class App {
     }
 
     private routes (): void {
-      this.express.get('/', (req, res) => {
-        return res.send('Hello World');
-      });
       this.express.use(routes);
     }
 }

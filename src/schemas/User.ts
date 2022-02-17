@@ -18,7 +18,7 @@ interface UserInterface extends Document {
 const UserSchema = new Schema({
   name: String,
   email: String,
-  password: String,
+  password: { type: String, select: false },
   profile: Number,
   segmento: String,
   turmas: [Number],
