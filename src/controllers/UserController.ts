@@ -6,7 +6,7 @@ import UserService from '../services/UserService';
 class UserController {
   public async authenticate (req: Request, res: Response, next): Promise<Response> {
     const authHeader = req.headers.authorization;
-    const token = authHeader && authHeader.split(' ')[1];
+    const token = authHeader && authHeader.split(' ')[0];
     if (token == null) return res.sendStatus(401);
 
     jwt.verify(token, process.env.ACESS_TOKEN_SECRET, (err, { user }) => {
