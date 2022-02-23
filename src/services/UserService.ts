@@ -10,7 +10,7 @@ class UserService {
     try {
       const acessToken = jwt.sign({ user }, process.env.ACESS_TOKEN_SECRET);
 
-      return ({ acessToken });
+      return ({ acessToken, user });
     } catch (error) {
       return null;
     }
