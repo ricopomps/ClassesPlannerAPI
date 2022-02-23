@@ -23,7 +23,7 @@ class UserService {
   public async store (inputUser) {
     try {
       const user = inputUser;
-      const hashedPassword = await bcrypt.hash(inputUser.password, 10);
+      const hashedPassword = await bcrypt.hash(process.env.DEFAULT_PASSWORD, 10);
       const hashedUser = { ...user, password: hashedPassword };
       await User.create(hashedUser);
       return 201;
