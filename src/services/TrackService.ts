@@ -5,7 +5,9 @@ import Track from '../schemas/Track';
 import { ProfileEnum } from './../model/profileEnum';
 
 class TrackService {
-  public async index () {
+  public async index (page) {
+    const limit = 12;
+    const skip = page ? (page - 1) * 12 : 0;
     const tracks = await Track.aggregate(
       [
         {
@@ -16,7 +18,9 @@ class TrackService {
             as: 'creator'
 
           }
-        }, { $unwind: { path: '$creator' } }, { $unset: 'creator.password' }
+        }, { $unwind: { path: '$creator' } }, { $unset: 'creator.password' },
+        { $skip: skip },
+        { $limit: limit }
       ]
     ).exec();
     return tracks;
@@ -31,7 +35,7 @@ class TrackService {
   public async findById (id) {
     const track = await Track.aggregate(
       [
-        { $match: { _id: mongoose.Types.ObjectId(id) } },
+        { $match: { _id: new mongoose.Types.ObjectId(id) } },
         {
           $lookup: {
             from: 'users',
@@ -56,7 +60,7 @@ class TrackService {
   public async findByUser (id) {
     const tracks = await Track.aggregate(
       [
-        { $match: { creator: mongoose.Types.ObjectId(id) } },
+        { $match: { creator: new mongoose.Types.ObjectId(id) } },
         {
           $lookup: {
             from: 'users',
@@ -71,11 +75,13 @@ class TrackService {
     return tracks;
   }
 
-  public async findFiltered (id, disciplinas, turmas, segmento) {
+  public async findFiltered (id, disciplinas, turmas, segmento, page) {
     try {
       let filter = {};
+      const limit = 12;
+      const skip = page ? (page - 1) * 12 : 0;
       if (id) {
-        filter = { ...filter, creator: mongoose.Types.ObjectId(id) };
+        filter = { ...filter, creator: new mongoose.Types.ObjectId(id) };
       }
       if (disciplinas) {
         filter = { ...filter, disciplina: { $in: disciplinas } };
@@ -98,8 +104,9 @@ class TrackService {
               // let: { segmento: '$creatorz.segmento' },
               // pipeline: [{ $match: { segmento: segmento, creatorz: '$creator' } }]
             }
-
-          }, { $unwind: { path: '$creator' } }, { $unset: 'creator.password' }
+          }, { $unwind: { path: '$creator' } }, { $unset: 'creator.password' },
+          { $skip: skip },
+          { $limit: limit }
         ]
       ).exec();
       return tracks;
@@ -108,27 +115,46 @@ class TrackService {
     }
   }
 
-  public async returnHome (_id, disciplina, segmento, profile) {
+  public async returnHome (_id, disciplina, segmento, profile, page) {
     switch (profile) {
       case ProfileEnum.professor:
         console.log('findByUsers', segmento, _id);
-        return await this.findFiltered(null, disciplina, null, segmento);
+        return await this.findFiltered(null, disciplina, null, segmento, page);
 
       case ProfileEnum.coordenador:
         console.log('findFiltered', segmento);
-        return await this.findFiltered(null, disciplina, null, null);
+        return await this.findFiltered(null, null, null, segmento, page);
 
       case ProfileEnum.coordenadorDeArea:
         console.log('findFiltered', disciplina);
-        return await this.findFiltered(null, disciplina, null, null);
+        return await this.findFiltered(null, disciplina, null, null, page);
 
       case ProfileEnum.adiministrador:
         console.log('index');
-        return await this.index();
+        return await this.index(page);
 
       default:
         console.log('profile', profile);
         return ('Perfil inválido');
+    }
+  }
+
+  public async returnPastTracks (id, disciplina /*, segmento */) {
+    try {
+      let filter = {};
+      if (id) {
+        filter = { ...filter, creator: new mongoose.Types.ObjectId(id) };
+      }
+      if (disciplina) {
+        filter = { ...filter, disciplina: { $in: disciplina } };
+      }
+      // if (segmento) {
+      //   filter = { ...filter, segmento: segmento };
+      // }
+      const tracks = await Track.find({ $match: filter }, { _id: 1, name: 1 }).exec();
+      return tracks;
+    } catch (error) {
+      throw new Error(error.message);
     }
   }
 }

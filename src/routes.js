@@ -18,5 +18,6 @@ routes.get('/tracks/:id', UserController.authenticate, TrackController.findById)
 routes.get('/tracks/filter/:id', UserController.authenticate, TrackController.findByUser);
 routes.put('/tracks', UserController.authenticate, TrackController.update);
 routes.get('/home/tracks', UserController.authenticate, TrackController.returnHome);
+routes.get('/past/tracks', UserController.authenticate, TrackController.returnPastTracks);
 
 export default routes;
