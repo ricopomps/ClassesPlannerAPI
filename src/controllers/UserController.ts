@@ -26,7 +26,12 @@ class UserController {
   }
 
   public async index (req: Request, res: Response): Promise<Response> {
-    const users = await UserService.index();
+    console.log('___________----');
+    console.log('___________----');
+    console.log('___________----');
+    console.log('___________----');
+    const { page, keyword, segmento } = req.query;
+    const users = await UserService.index(page, keyword, segmento);
 
     return res.json(users);
   }

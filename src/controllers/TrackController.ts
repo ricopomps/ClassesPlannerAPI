@@ -37,7 +37,7 @@ class TrackController {
   public async findFiltered (req: Request, res: Response): Promise<Response> {
     try {
       const { _id, disciplinas, turmas } = req.user;
-      const tracks = await TrackService.findFiltered(_id, disciplinas, turmas, null, null);
+      const tracks = await TrackService.findFiltered(_id, disciplinas, turmas, null, null, null);
 
       return res.json(tracks);
     } catch (error) {
@@ -47,13 +47,20 @@ class TrackController {
 
   public async returnHome (req: Request, res: Response): Promise<Response> {
     const { _id, disciplina, segmento, profile } = req.user;
-    const resp = await TrackService.returnHome(_id, disciplina, segmento, profile, req.query.page);
+    const resp = await TrackService.returnHome(_id, disciplina, segmento, profile, req.query.page, req.query.keyword);
     return res.json(resp);
   }
 
   public async returnPastTracks (req: Request, res: Response): Promise<Response> {
     const { _id, disciplina, segmento } = req.user;
-    const resp = await TrackService.returnPastTracks(_id, disciplina, segmento);
+    const resp = await TrackService.returnPastTracks(_id, disciplina /*, segmento */);
+    return res.json(resp);
+  }
+
+  public async returnTrackReport (req: Request, res: Response): Promise<Response> {
+    console.log('Chegou aqui');
+    const { id } = req.params;
+    const resp = await TrackService.returnTrackReport(id, res);
     return res.json(resp);
   }
 }

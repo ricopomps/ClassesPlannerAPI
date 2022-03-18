@@ -1,5 +1,7 @@
 
 import mongoose from 'mongoose';
+import moment from 'moment';
+import xl from 'excel4node';
 
 import Track from '../schemas/Track';
 import { ProfileEnum } from './../model/profileEnum';
@@ -75,11 +77,16 @@ class TrackService {
     return tracks;
   }
 
-  public async findFiltered (id, disciplinas, turmas, segmento, page) {
+  public async findFiltered (id, disciplinas, turmas, segmento, page, keyword) {
     try {
       let filter = {};
       const limit = 12;
       const skip = page ? (page - 1) * 12 : 0;
+
+      if (keyword) {
+        filter = { ...filter, name: new RegExp(keyword, 'i') };
+      }
+
       if (id) {
         filter = { ...filter, creator: new mongoose.Types.ObjectId(id) };
       }
@@ -115,23 +122,23 @@ class TrackService {
     }
   }
 
-  public async returnHome (_id, disciplina, segmento, profile, page) {
+  public async returnHome (_id, disciplina, segmento, profile, page, keyword) {
     switch (profile) {
       case ProfileEnum.professor:
         console.log('findByUsers', segmento, _id);
-        return await this.findFiltered(null, disciplina, null, segmento, page);
+        return await this.findFiltered(null, disciplina, null, segmento, page, keyword);
 
       case ProfileEnum.coordenador:
         console.log('findFiltered', segmento);
-        return await this.findFiltered(null, null, null, segmento, page);
+        return await this.findFiltered(null, null, null, segmento, page, keyword);
 
       case ProfileEnum.coordenadorDeArea:
         console.log('findFiltered', disciplina);
-        return await this.findFiltered(null, disciplina, null, null, page);
+        return await this.findFiltered(null, disciplina, null, null, page, keyword);
 
       case ProfileEnum.adiministrador:
         console.log('index');
-        return await this.index(page);
+        return await this.findFiltered(null, null, null, null, page, keyword);
 
       default:
         console.log('profile', profile);
@@ -155,6 +162,59 @@ class TrackService {
       return tracks;
     } catch (error) {
       throw new Error(error.message);
+    }
+  }
+
+  public async returnTrackReport (id, res) {
+    try {
+      const track = await this.findById(id);
+
+      const wb = new xl.Workbook({
+        defaultFont: {
+          size: 10
+        }
+      });
+
+      const ws = wb.addWorksheet('Sheet 1');
+
+      ws.column(2).setWidth(40);
+      ws.column(3).setWidth(40);
+      ws.column(5).setWidth(20);
+      ws.column(11).setWidth(200);
+
+      // header---------
+      const isMerged = true;
+      const headerStyle = { font: { bold: true }, alignment: { vertical: 'center' }, fill: { type: 'pattern', patternType: 'solid', fgColor: 'FFCC33' } };
+      ws.cell(1, 1, 1, 11, isMerged)
+        .string('Merit Coin - Relatório de Feedbacks ')
+        .style({ font: { bold: true, size: 12 } });
+      ws.cell(2, 1, 2, 11, isMerged).string(`Extraido em ${moment(new Date()).format('DD/MM/YYYY HH:mm')}`);
+      ws.cell(3, 1, 4, 1, isMerged).string('Nome').style(headerStyle);
+      ws.cell(3, 2, 4, 2, isMerged).string('Segmento').style(headerStyle);
+      ws.cell(3, 3, 4, 3, isMerged).string('Série/Ano').style(headerStyle);
+      ws.cell(3, 4, 4, 4, isMerged).string('Disciplina').style(headerStyle);
+      ws.cell(3, 5, 4, 5, isMerged).string('Objetivos').style(headerStyle);
+      ws.cell(3, 6, 3, 7, isMerged).string('Habilidades Associadas').style(headerStyle);
+      ws.cell(3, 8, 3, 9, isMerged).string('Criador').style(headerStyle);
+      ws.cell(3, 10, 4, 10, isMerged).string('Data de Criação').style(headerStyle);
+      ws.cell(3, 11, 4, 11, isMerged).string('Observação').style(headerStyle);
+
+      // end header-------
+
+      ws.cell(4, 1).string(track[0].name);
+      ws.cell(4, 2).string(track[0].segmento);
+      ws.cell(4, 3).string(track[0].turma);
+      ws.cell(4, 4).string(track[0].disciplina);
+      ws.cell(4, 4).string(track[0].objectives);
+      ws.cell(4, 4).string(track[0].associatedHabilities);
+      ws.cell(4, 5).string(track[0].creator.name);
+      ws.cell(4, 5).string(track[0].createdAt);
+      ws.cell(4, 5).string(track[0].observation);
+
+      wb.write('Excel.xlsx', res);
+    } catch (e) {
+      console.error(e);
+      res.status(500).send('Erro no processamento do relatório');
     }
   }
 }

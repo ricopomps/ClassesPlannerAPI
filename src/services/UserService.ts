@@ -21,8 +21,20 @@ class UserService {
     }
   }
 
-  public async index () {
-    return await User.find();
+  public async index (page, keyword, segmento /* , disciplina */) {
+    const users = User.find();
+    console.log(keyword);
+    console.log(segmento);
+    console.log('___________________________');
+    if (keyword) {
+      users.where('name').equals(new RegExp(keyword, 'i'));
+    }
+    if (segmento) {
+      users.where('segmento').equals(segmento);
+    }
+    // users.where('disciplina').equals(disciplina);
+    const response = await users.exec();
+    return response;
   }
 
   public async store (inputUser) {
