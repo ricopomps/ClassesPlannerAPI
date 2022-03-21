@@ -8,9 +8,7 @@ import User from '../schemas/User';
 
 class UserService {
   public async login (inputUser) {
-    console.log(inputUser);
     const user = await User.findOne({ email: inputUser.email }).select('+password').lean();
-    console.log(user);
     if (user == null || !(await bcrypt.compare(inputUser.password, user.password))) return null;
     try {
       const acessToken = jwt.sign({ user }, process.env.ACESS_TOKEN_SECRET);
@@ -23,9 +21,6 @@ class UserService {
 
   public async index (page, keyword, segmento /* , disciplina */) {
     const users = User.find();
-    console.log(keyword);
-    console.log(segmento);
-    console.log('___________________________');
     if (keyword) {
       users.where('name').equals(new RegExp(keyword, 'i'));
     }
