@@ -9,6 +9,7 @@ routes.get('/users', UserController.index);
 routes.post('/login', UserController.login);
 routes.post('/users', UserController.store);
 routes.put('/users', UserController.authenticate, UserController.update);
+routes.delete('/users/:id', UserController.authenticate, UserController.delete);
 routes.get('/users/defaults', UserController.authenticate, UserController.returnDefaults);
 routes.get('/users/:id', UserController.authenticate, UserController.findWithTracks);
 routes.get('/tracks', UserController.authenticate, TrackController.index);

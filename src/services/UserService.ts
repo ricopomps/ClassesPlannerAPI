@@ -23,9 +23,6 @@ class UserService {
 
   public async index (page, keyword, segmento /* , disciplina */) {
     const users = User.find();
-    console.log(keyword);
-    console.log(segmento);
-    console.log('___________________________');
     if (keyword) {
       users.where('name').equals(new RegExp(keyword, 'i'));
     }
@@ -45,6 +42,7 @@ class UserService {
       await User.create(hashedUser);
       return 201;
     } catch (error) {
+      console.log(error);
       return 401;
     }
   }
@@ -53,6 +51,10 @@ class UserService {
     const { _id, password, email, ...updatableUser } = user;
     const updatedUser = await User.findByIdAndUpdate(_id, updatableUser, { new: true });
     return updatedUser;
+  }
+
+  public async delete (userId) {
+    return await User.deleteOne({ _id: mongoose.Types.ObjectId(userId) });
   }
 
   public async findWithTracks (id) {

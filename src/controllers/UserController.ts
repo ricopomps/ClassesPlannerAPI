@@ -26,10 +26,6 @@ class UserController {
   }
 
   public async index (req: Request, res: Response): Promise<Response> {
-    console.log('___________----');
-    console.log('___________----');
-    console.log('___________----');
-    console.log('___________----');
     const { page, keyword, segmento } = req.query;
     const users = await UserService.index(page, keyword, segmento);
 
@@ -43,6 +39,12 @@ class UserController {
 
   public async update (req: Request, res: Response): Promise<Response> {
     const updatedUser = await UserService.update(req.body);
+
+    return res.json(updatedUser);
+  }
+
+  public async delete (req: Request, res: Response): Promise<Response> {
+    const updatedUser = await UserService.delete(req.params.id);
 
     return res.json(updatedUser);
   }
