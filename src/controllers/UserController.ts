@@ -5,15 +5,12 @@ import UserService from '../services/UserService';
 
 class UserController {
   public async authenticate (req: Request, res: Response, next): Promise<Response> {
-    console.log('autnera');
     const authHeader = req.headers.authorization;
     const token = authHeader && authHeader.split(' ')[1];
     if (token == null) return res.sendStatus(401);
     jwt.verify(token, process.env.ACESS_TOKEN_SECRET, (err, { user }) => {
-      console.log('autnera', user);
       if (err) return res.sendStatus(403);
       req.user = user;
-      console.log('dsad');
       next();
     });
   }
