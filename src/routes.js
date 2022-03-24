@@ -23,5 +23,6 @@ routes.get('/past/tracks', UserController.authenticate, TrackController.returnPa
 routes.get('/tracks/only/report/:id', UserController.authenticate, TrackController.returnTrackReport);
 routes.get('/subject', UserController.authenticate, SubjectController.index);
 routes.post('/subject', UserController.authenticate, SubjectController.store);
+routes.get('/subject/:subject', UserController.authenticate, SubjectController.getBySubject);
 
 export default routes;

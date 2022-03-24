@@ -10,6 +10,11 @@ class SubjectService {
     const subjectStored = await Subject.create(subject);
     return subjectStored;
   }
+
+  public async getBySubject (subject: string) {
+    const subjects = await Subject.find({ disciplina: subject }).exec();
+    return subjects;
+  }
 }
 
 export default new SubjectService();

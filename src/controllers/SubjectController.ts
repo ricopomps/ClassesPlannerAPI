@@ -12,6 +12,12 @@ class SubjectController {
     const Subjects = await SubjectService.store(req.body);
     return res.json(Subjects);
   }
+
+  public async getBySubject (req: Request, res: Response) {
+    const { subject } = req.params;
+    const subjects = await SubjectService.getBySubject(subject);
+    return res.json(subjects);
+  }
 }
 
 export default new SubjectController();
