@@ -40,6 +40,12 @@ class UserController {
     return res.json(updatedUser);
   }
 
+  public async delete (req: Request, res: Response): Promise<Response> {
+    const updatedUser = await UserService.delete(req.params.id);
+
+    return res.json(updatedUser);
+  }
+
   public async findWithTracks (req: Request, res: Response): Promise<Response> {
     const { id: _id } = req.params;
     const userWithTracks = await UserService.findWithTracks(_id);
