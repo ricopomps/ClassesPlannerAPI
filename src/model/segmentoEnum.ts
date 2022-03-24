@@ -1,4 +1,6 @@
 export enum SegmentoEnum {
-  segmento1 = 1,
-  segmento2 = 2,
+  educacaoInfantil = 'Educação Infantil',
+  ensinoFundamental1 = 'Ensino Fundamental I',
+  ensinoFundamental2 = 'Ensino Fundamental II',
+  ensinoMedio = 'Ensino médio',
 }
