@@ -27,20 +27,17 @@ interface SubjectInterface extends Document
 const SubjectSchema = new Schema({
   anos: [String],
   disciplina: String,
-  segmentos: [
-    {
-      segmento: String,
-      unidadeTematica: [{
-        tituloUnidade: String,
-        habilidades: [
-          {
-            codigoHabilidade: String,
-            descricaoHabilidade: String
-          }
-        ]
-      }]
-    }
-  ]
+  segmento: String,
+  unidadesTematicas: [{
+    tituloUnidade: String,
+    habilidades: [
+      {
+        codigoHabilidade: String,
+        descricaoHabilidade: String
+      }
+    ]
+  }]
+
 }, {
   typeKey: '$type',
   timestaps: true
