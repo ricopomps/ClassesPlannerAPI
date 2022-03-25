@@ -108,15 +108,22 @@ class TrackService {
               localField: 'creator',
               foreignField: '_id',
               as: 'creator'
-              // let: { segmento: '$creatorz.segmento' },
-              // pipeline: [{ $match: { segmento: segmento, creatorz: '$creator' } }]
             }
           }, { $unwind: { path: '$creator' } }, { $unset: 'creator.password' },
-          { $skip: skip },
-          { $limit: limit }
+          {
+            $facet: {
+              tracks: [
+                { $skip: skip },
+                { $limit: limit }
+              ],
+              pageInfo: [
+                { $group: { _id: null, count: { $sum: 1 } } }
+              ]
+            }
+          }
         ]
       ).exec();
-      return tracks;
+      return tracks[0];
     } catch (error) {
       throw new Error(error.message);
     }
@@ -125,23 +132,18 @@ class TrackService {
   public async returnHome (_id, disciplina, segmento, profile, page, keyword) {
     switch (profile) {
       case ProfileEnum.professor:
-        console.log('findByUsers', segmento, _id);
         return await this.findFiltered(null, disciplina, null, segmento, page, keyword);
 
       case ProfileEnum.coordenador:
-        console.log('findFiltered', segmento);
         return await this.findFiltered(null, null, null, segmento, page, keyword);
 
       case ProfileEnum.coordenadorDeArea:
-        console.log('findFiltered', disciplina);
         return await this.findFiltered(null, disciplina, null, null, page, keyword);
 
       case ProfileEnum.adiministrador:
-        console.log('index');
         return await this.findFiltered(null, null, null, null, page, keyword);
 
       default:
-        console.log('profile', profile);
         return ('Perfil inválido');
     }
   }
