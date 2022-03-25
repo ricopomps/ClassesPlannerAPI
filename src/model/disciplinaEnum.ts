@@ -15,4 +15,5 @@ export enum DisciplinaEnum {
   sociologia = 'Sociologia',
   filosofia = 'Filosofia',
   literatura = 'Literatura',
+  educacaoFisica = 'Educação Física',
 }
