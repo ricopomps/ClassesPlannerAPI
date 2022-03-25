@@ -1,8 +1,8 @@
 import { Router } from 'express';
 
-import UserController from './controllers/UserController';
-import TrackController from './controllers/TrackController';
-import SubjectController from './controllers/SubjectController';
+import UserController from './../controllers/UserController';
+import TrackController from './../controllers/TrackController';
+import SubjectController from './../controllers/SubjectController';
 
 const routes = Router();
 

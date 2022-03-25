@@ -3,7 +3,7 @@ import cors from 'cors';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 
-import routes from './routes';
+import routes from './routes/routes';
 
 class App {
     public express: express.Application;

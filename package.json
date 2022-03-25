@@ -7,7 +7,7 @@
   "license": "MIT",
   "scripts": {
     "dev": "nodemon src/server.ts",
-    "start": "nodemon src/server.ts",
+    "start": "node dist/server.js",
     "build": "sucrase ./src -d ./dist --transforms typescript,imports"
   },
   "devDependencies": {
