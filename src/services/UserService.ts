@@ -1,3 +1,5 @@
+import { StepsEnum } from './../model/stepsEnum';
+import { ResourcesEnum } from './../model/resourcesEnum';
 import { TurmaEnum } from './../model/turmasEnum';
 import { SegmentoEnum } from './../model/segmentoEnum';
 import { DisciplinaEnum } from './../model/disciplinaEnum';
@@ -78,7 +80,9 @@ class UserService {
     const segmentos = Object.values(SegmentoEnum).filter(value => typeof value === 'string') as string[];
     const turmas = Object.values(TurmaEnum).filter(value => typeof value === 'string') as string[];
     const tipos = Object.values(TipoEnum).filter(value => typeof value === 'string') as string[];
-    const defaultValues = { disciplinas, segmentos, turmas, tipos };
+    const resources = Object.values(ResourcesEnum).filter(value => typeof value === 'string') as string[];
+    const steps = Object.values(StepsEnum).filter(value => typeof value === 'string') as string[];
+    const defaultValues = { disciplinas, segmentos, turmas, tipos, resources, steps };
     return defaultValues;
   }
 }

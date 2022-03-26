@@ -1,0 +1,15 @@
+export enum ResourcesEnum {
+    ficha = 'Ficha',
+    livro = 'Livro',
+    caderno = 'Caderno',
+    materialReciclado = 'Material reciclado',
+    musica = 'Música',
+    video = 'Vídeo',
+    plataformaDeJogosOnline = 'Plataforma de jogos online',
+    artigo = 'Artigo',
+    materia = 'Matéria',
+    reportagem = 'Reportagem',
+    cards = 'Cards',
+    aparelhosWletronicos = 'Aparelhos eletrônicos',
+    outros = 'Outros',
+  }
