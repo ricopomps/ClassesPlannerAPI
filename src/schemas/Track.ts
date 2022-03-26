@@ -1,6 +1,8 @@
-import { TipoEnum } from './../model/tipoEnum';
 import { Schema, model, Document } from 'mongoose';
 
+import { ResourcesEnum } from './../model/resourcesEnum';
+import { TipoEnum } from './../model/tipoEnum';
+import { StepsEnum } from './../model/stepsEnum';
 import { DisciplinaEnum } from './../model/disciplinaEnum';
 import { TurmaEnum } from './../model/turmaEnum';
 
@@ -10,10 +12,10 @@ interface TrackInterface extends Document {
   disciplina: DisciplinaEnum,
   objectives: string,
   methodology: TipoEnum,
-  resource: string,
+  resource: ResourcesEnum,
   associatedHabilities: [string],
   activities: [{
-    type: string,
+    steps: StepsEnum,
     description: string
   }
   ],
