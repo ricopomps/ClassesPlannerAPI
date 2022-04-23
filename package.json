@@ -2,6 +2,9 @@
   "name": "ClassesPlannerAPI",
   "version": "1.0.0",
   "main": "index.js",
+  "engines": {
+    "node": "16.x"
+  },
   "repository": "https://github.com/ricopomps/ClassesPlannerAPI.git",
   "author": "ricopomps <ricardopompiliodossantos@gmail.com>",
   "license": "MIT",
