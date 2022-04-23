@@ -38,6 +38,7 @@ class TrackController {
   public async findFiltered (req: Request, res: Response): Promise<Response> {
     try {
       const { _id, disciplinas, turmas } = req.user;
+
       const tracks = await TrackService.findFiltered(_id, disciplinas, turmas, null, null, null);
 
       return res.json(tracks);
