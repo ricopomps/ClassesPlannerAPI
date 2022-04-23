@@ -19,10 +19,10 @@ const UserSchema = new Schema({
   name: String,
   email: String,
   password: { type: String, select: false },
-  profile: Number,
+  profile: String,
   segmento: String,
-  turmas: [Number],
-  disciplinas: [Number]
+  turmas: [String],
+  disciplinas: [String]
 }, {
   timestaps: true
 });

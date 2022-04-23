@@ -25,8 +25,8 @@ interface TrackInterface extends Document {
 
 const TrackSchema = new Schema({
   name: String,
-  turma: Number,
-  disciplina: Number,
+  turma: String,
+  disciplina: String,
   objectives: String,
   associatedHabilities: [String],
   methodology: String,
