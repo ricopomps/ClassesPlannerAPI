@@ -40,7 +40,7 @@ const TrackSchema = new Schema({
   creator: Schema.ObjectId
 }, {
   typeKey: '$type',
-  timestaps: true
+  timestamps: true
 });
 
 export default model<TrackInterface>('Track', TrackSchema);

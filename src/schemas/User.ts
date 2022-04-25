@@ -24,7 +24,7 @@ const UserSchema = new Schema({
   turmas: [String],
   disciplinas: [String]
 }, {
-  timestaps: true
+  timestamps: true
 });
 
 export default model<UserInterface>('User', UserSchema);

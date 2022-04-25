@@ -40,7 +40,7 @@ const SubjectSchema = new Schema({
 
 }, {
   typeKey: '$type',
-  timestaps: true
+  timestamps: true
 });
 
 export default model<SubjectInterface>('Subject', SubjectSchema);
