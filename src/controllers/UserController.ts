@@ -57,6 +57,13 @@ class UserController {
     const defaults = await UserService.returnDefaults();
     return res.send(defaults);
   }
+
+  public async changePassword (req: Request, res: Response): Promise<Response> {
+    const { id: _id } = req.params;
+    const { password } = req.body;
+    const response = await UserService.changePassword({ _id, password });
+    return res.send(response);
+  }
 }
 
 export default new UserController();

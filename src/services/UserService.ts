@@ -85,5 +85,12 @@ class UserService {
     const defaultValues = { disciplinas, segmentos, turmas, tipos, resources, steps };
     return defaultValues;
   }
+
+  public async changePassword (inputUser) {
+    const user = await User.findById(inputUser._id);
+    const hashedPassword = await bcrypt.hash(inputUser.password, 10);
+    const updatedUser = await User.findByIdAndUpdate(user._id, { user, password: hashedPassword });
+    return updatedUser;
+  }
 }
 export default new UserService();
