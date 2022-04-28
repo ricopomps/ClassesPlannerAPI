@@ -20,7 +20,18 @@ class TrackService {
             as: 'creator'
 
           }
-        }, { $unwind: { path: '$creator' } }, { $unset: 'creator.password' },
+        },
+        {
+          $lookup: {
+            from: 'users',
+            localField: 'associatedUsers',
+            foreignField: '_id',
+            as: 'associatedUsers'
+
+          }
+        },
+        { $unwind: { path: '$creator' } }, { $unset: 'creator.password' },
+        { $unwind: { path: '$associatedUsers' } }, { $unset: 'associatedUsers.password' },
         { $skip: skip },
         { $limit: limit }
       ]
@@ -46,7 +57,18 @@ class TrackService {
             as: 'creator'
 
           }
-        }, { $unwind: { path: '$creator' } }, { $unset: 'creator.password' }
+        },
+        {
+          $lookup: {
+            from: 'users',
+            localField: 'associatedUsers',
+            foreignField: '_id',
+            as: 'associatedUsers'
+
+          }
+        },
+        { $unwind: { path: '$creator' } }, { $unset: 'creator.password' },
+        { $unwind: { path: '$associatedUsers' } }, { $unset: 'associatedUsers.password' }
       ]
     ).exec();
 
@@ -71,7 +93,18 @@ class TrackService {
             as: 'creator'
 
           }
-        }, { $unwind: { path: '$creator' } }, { $unset: 'creator.password' }
+        },
+        {
+          $lookup: {
+            from: 'users',
+            localField: 'associatedUsers',
+            foreignField: '_id',
+            as: 'associatedUsers'
+
+          }
+        },
+        { $unwind: { path: '$creator' } }, { $unset: 'creator.password' },
+        { $unwind: { path: '$associatedUsers' } }, { $unset: 'associatedUsers.password' }
       ]
     ).exec();
     return tracks;
@@ -79,6 +112,7 @@ class TrackService {
 
   public async findFiltered (id, disciplinas, turmas, segmento, page, keyword) {
     try {
+      console.log('findFiltered');
       let filter = {};
       const limit = 12;
       const skip = page ? (page - 1) * 12 : 0;
@@ -109,7 +143,17 @@ class TrackService {
               foreignField: '_id',
               as: 'creator'
             }
-          }, { $unwind: { path: '$creator' } }, { $unset: 'creator.password' },
+          },
+          {
+            $lookup: {
+              from: 'users',
+              localField: 'associatedUsers',
+              foreignField: '_id',
+              as: 'associatedUsers'
+            }
+          },
+          { $unwind: { path: '$creator' } }, { $unset: 'creator.password' },
+          { $unwind: { path: '$associatedUsers' } }, { $unset: 'associatedUsers.password' },
           {
             $facet: {
               tracks: [

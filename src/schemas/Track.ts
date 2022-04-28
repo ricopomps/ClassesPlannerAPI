@@ -20,7 +20,8 @@ interface TrackInterface extends Document {
   }
   ],
   observation: string,
-  creator: Schema.ObjectId
+  creator: Schema.ObjectId,
+  associatedUsers: [Schema.ObjectId]
 }
 
 const TrackSchema = new Schema({
@@ -37,7 +38,8 @@ const TrackSchema = new Schema({
   }
   ],
   observation: String,
-  creator: Schema.ObjectId
+  creator: Schema.ObjectId,
+  associatedUsers: [Schema.ObjectId]
 }, {
   typeKey: '$type',
   timestamps: true
