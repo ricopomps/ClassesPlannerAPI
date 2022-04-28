@@ -19,7 +19,7 @@ const UserSchema = new Schema({
   name: String,
   email: String,
   password: { type: String, select: false },
-  profile: String,
+  profile: Number,
   segmento: String,
   turmas: [String],
   disciplinas: [String]
