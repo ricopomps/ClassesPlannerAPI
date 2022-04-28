@@ -96,9 +96,9 @@ class TrackService {
       if (turmas) {
         filter = { ...filter, turma: { $in: turmas } };
       }
-      // if (segmento) {
-      //   filter = { ...filter, segmento: segmento };
-      // }
+      if (segmento) {
+        filter = { ...filter, segmento: segmento };
+      }
       const tracks = await Track.aggregate(
         [
           { $match: filter },
