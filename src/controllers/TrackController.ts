@@ -48,14 +48,14 @@ class TrackController {
   }
 
   public async returnHome (req: Request, res: Response): Promise<Response> {
-    const { _id, disciplina, segmento, profile } = req.user;
-    const resp = await TrackService.returnHome(_id, disciplina, segmento, profile, req.query.page, req.query.keyword);
+    const { _id, disciplinas, segmento, profile } = req.user;
+    const resp = await TrackService.returnHome(_id, disciplinas, segmento, profile, req.query.page, req.query.keyword);
     return res.json(resp);
   }
 
   public async returnPastTracks (req: Request, res: Response): Promise<Response> {
-    const { _id, disciplina /*, segmento */ } = req.user;
-    const resp = await TrackService.returnPastTracks(_id, disciplina /*, segmento */);
+    const { _id } = req.user;
+    const resp = await TrackService.returnPastTracks(_id);
     return res.json(resp);
   }
 

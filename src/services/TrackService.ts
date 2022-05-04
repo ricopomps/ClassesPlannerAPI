@@ -5,6 +5,7 @@ import xl from 'excel4node';
 
 import Track from '../schemas/Track';
 import { ProfileEnum } from './../model/profileEnum';
+import User from '../schemas/User';
 
 class TrackService {
   public async index (page) {
@@ -67,8 +68,8 @@ class TrackService {
 
           }
         },
-        { $unwind: { path: '$creator' } }, { $unset: 'creator.password' },
-        { $unwind: { path: '$associatedUsers' } }, { $unset: 'associatedUsers.password' }
+        { $unwind: { path: '$creator' } }, { $unset: 'creator.password' }
+        // { $unwind: { path: '$associatedUsers' } }, { $unset: 'associatedUsers.password' } TODO
       ]
     ).exec();
 
@@ -112,77 +113,58 @@ class TrackService {
 
   public async findFiltered (id, disciplinas, turmas, segmento, page, keyword) {
     try {
-      console.log('findFiltered');
-      let filter = {};
-      const limit = 12;
-      const skip = page ? (page - 1) * 12 : 0;
+      const limit = 8;
+      const skip = page ? (page - 1) * limit : 0;
+
+      const query = Track.aggregate();
 
       if (keyword) {
-        filter = { ...filter, name: new RegExp(keyword, 'i') };
-      }
-
+        query.match({ name: new RegExp(keyword, 'i') });
+      };
       if (id) {
-        filter = { ...filter, creator: new mongoose.Types.ObjectId(id) };
-      }
+        query.match({ creator: new mongoose.Types.ObjectId(id) });
+      };
       if (disciplinas) {
-        filter = { ...filter, disciplina: { $in: disciplinas } };
-      }
+        query.match({ disciplina: { $in: disciplinas } });
+      };
       if (turmas) {
-        filter = { ...filter, turma: { $in: turmas } };
-      }
+        query.match({ turma: { $in: turmas } });
+      };
+
+      const pipeline = User.aggregate();
       if (segmento) {
-        filter = { ...filter, segmento: segmento };
-      }
-      const tracks = await Track.aggregate(
-        [
-          { $match: filter },
-          {
-            $lookup: {
-              from: 'users',
-              localField: 'creator',
-              foreignField: '_id',
-              as: 'creator'
-            }
-          },
-          {
-            $lookup: {
-              from: 'users',
-              localField: 'associatedUsers',
-              foreignField: '_id',
-              as: 'associatedUsers'
-            }
-          },
-          { $unwind: { path: '$creator' } }, { $unset: 'creator.password' },
-          { $unwind: { path: '$associatedUsers' } }, { $unset: 'associatedUsers.password' },
-          {
-            $facet: {
-              tracks: [
-                { $skip: skip },
-                { $limit: limit }
-              ],
-              pageInfo: [
-                { $group: { _id: null, count: { $sum: 1 } } }
-              ]
-            }
-          }
-        ]
-      ).exec();
+        pipeline.match({ segmento: segmento });
+      };
+
+      query.lookup({ from: 'users', localField: 'creator', foreignField: '_id', as: 'creator', pipeline: pipeline.pipeline() });
+      query.lookup({ from: 'users', localField: 'associatedUsers', foreignField: '_id', as: 'associatedUsers' });
+
+      query.unwind({ path: '$creator' });
+      // query.unset('creator.password'); TODO
+
+      // query.unwind({ path: '$associatedUsers' }); TODO
+      // query.unset('associatedUser.password'); TODO
+
+      query.facet({ tracks: [{ $skip: skip }, { $limit: limit }], pageInfo: [{ $group: { _id: null, count: { $sum: 1 } } }] });
+      query.sort({ createdAt: -1 });
+
+      const tracks = await query.exec();
       return tracks[0];
     } catch (error) {
       throw new Error(error.message);
     }
   }
 
-  public async returnHome (_id, disciplina, segmento, profile, page, keyword) {
+  public async returnHome (_id, disciplinas, segmento, profile, page, keyword) {
     switch (profile) {
       case ProfileEnum.professor:
-        return await this.findFiltered(null, disciplina, null, segmento, page, keyword);
+        return await this.findFiltered(null, disciplinas, null, segmento, page, keyword);
 
       case ProfileEnum.coordenador:
         return await this.findFiltered(null, null, null, segmento, page, keyword);
 
       case ProfileEnum.coordenadorDeArea:
-        return await this.findFiltered(null, disciplina, null, null, page, keyword);
+        return await this.findFiltered(null, disciplinas, null, null, page, keyword);
 
       case ProfileEnum.adiministrador:
         return await this.findFiltered(null, null, null, null, page, keyword);
@@ -192,20 +174,9 @@ class TrackService {
     }
   }
 
-  public async returnPastTracks (id, disciplina /*, segmento */) {
+  public async returnPastTracks (id) {
     try {
-      let filter = {};
-      if (id) {
-        filter = { ...filter, creator: new mongoose.Types.ObjectId(id) };
-      }
-      if (disciplina) {
-        filter = { ...filter, disciplina: { $in: disciplina } };
-      }
-      // if (segmento) {
-      //   filter = { ...filter, segmento: segmento };
-      // }
-      const tracks = await Track.find({ $match: filter }, { _id: 1, name: 1 }).exec();
-      return tracks;
+      return Track.find({ creator: new mongoose.Types.ObjectId(id) }, { _id: 1, name: 1 }).exec();
     } catch (error) {
       throw new Error(error.message);
     }
