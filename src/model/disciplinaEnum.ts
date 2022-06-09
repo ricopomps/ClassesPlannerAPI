@@ -16,4 +16,6 @@ export enum DisciplinaEnum {
   filosofia = 'Filosofia',
   literatura = 'Literatura',
   educacaoFisica = 'Educação Física',
+  xadrez = 'Xadrez',
+  etica = 'Ética',
 }
